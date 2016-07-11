@@ -7,24 +7,22 @@ def int getAutoVersionCode() {
     return cmd.execute().text.trim().toInteger()
 }
 
-def String getAutoVersionName() {
+def String getAutoVersionName(int versionCode) {
     def cmd = 'git describe --tags'
-    def versionName = cmd.execute().text.trim()
+    def versionNamePrefix = cmd.execute().text.trim()
 
     def pattern = "-(\\d+)-g"
-    def matcher = versionName =~ pattern
+    def matcher = versionNamePrefix =~ pattern
 
     if (matcher) {
-        versionName = versionName.substring(0, matcher.start()) + "." + matcher[0][1]
-    } else {
-        versionName = versionName + ".0"
+        versionNamePrefix = versionNamePrefix.substring(0, matcher.start())
     }
 
-    return versionName
+    return versionNamePrefix + "." + versionCode
 }
 
 def autoVersionCode = getAutoVersionCode();
-def autoVersionName = getAutoVersionName();
+def autoVersionName = getAutoVersionName(autoVersionCode);
 version = autoVersionName
 
 android {
