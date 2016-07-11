@@ -3,6 +3,7 @@
           package="com.idonans.adownload.demo">
 
     <application
+        android:name="com.idonans.adownload.demo.MainApplication"
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"
         android:label="@string/app_name"
