@@ -10,8 +10,8 @@ import com.idonans.acommon.lang.TaskQueue;
 import com.idonans.acommon.lang.WeakAvailable;
 
 import java.lang.reflect.Type;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * Android Download Manager singleton
@@ -25,12 +25,12 @@ public class ADownloadManager {
 
     }
 
-    public static ADownloadManager getInstance() {
+    private static ADownloadManager getInstance() {
         return InstanceHolder.sInstance;
     }
 
     private static final String TAG = "ADownloadManager";
-    private final TaskQueue mActionQueue = new TaskQueue(1);
+    private static final TaskQueue ACTION_QUEUE = new TaskQueue(1);
     @NonNull
     private final Info mInfo;
 
@@ -41,11 +41,41 @@ public class ADownloadManager {
     }
 
     /**
-     * enqueueAction with weak true
-     *
+     * only for debug
+     */
+    public static void enqueuePrintDBContent() {
+        enqueueStrongAction(new Action() {
+            @Override
+            public void onAction(@NonNull ADownloadManager manager, @NonNull Info info) {
+                ADownloadDBManager.getInstance().printContent();
+            }
+        });
+    }
+
+    /**
+     * 序列化下载管理器中的数据到数据库
+     */
+    public static void enqueueSave() {
+        enqueueStrongAction(new Action() {
+            @Override
+            public void onAction(@NonNull ADownloadManager manager, @NonNull Info info) {
+                CommonLog.d(TAG + " save to db");
+                ADownloadDBManager.getInstance().setContent(info.toJson());
+            }
+        });
+    }
+
+    /**
      * @see #enqueueAction(Action, boolean)
      */
-    public void enqueueAction(Action action) {
+    public static void enqueueStrongAction(Action action) {
+        enqueueAction(action, false);
+    }
+
+    /**
+     * @see #enqueueAction(Action, boolean)
+     */
+    public static void enqueueAction(Action action) {
         enqueueAction(action, true);
     }
 
@@ -55,33 +85,8 @@ public class ADownloadManager {
      *
      * @param weak 指定内部是否对此 Action 只持弱引用
      */
-    public void enqueueAction(Action action, boolean weak) {
-        mActionQueue.enqueue(new ActionRunnable(action, weak));
-    }
-
-    /**
-     * only for debug
-     */
-    public void printDebugDatabaseContentAsync() {
-        enqueueAction(new Action() {
-            @Override
-            public void onAction(@NonNull ADownloadManager manager, @NonNull Info info) {
-                ADownloadDBManager.getInstance().printContent();
-            }
-        }, false);
-    }
-
-    /**
-     * 序列化下载管理器中的数据到数据库
-     */
-    public void saveAsync() {
-        enqueueAction(new Action() {
-            @Override
-            public void onAction(@NonNull ADownloadManager manager, @NonNull Info info) {
-                CommonLog.d(TAG + " save to db");
-                ADownloadDBManager.getInstance().setContent(info.toJson());
-            }
-        }, false);
+    public static void enqueueAction(Action action, boolean weak) {
+        ACTION_QUEUE.enqueue(new ActionRunnable(action, weak));
     }
 
     public interface Action {
@@ -91,7 +96,7 @@ public class ADownloadManager {
         void onAction(@NonNull ADownloadManager manager, @NonNull Info info);
     }
 
-    private final class ActionRunnable extends WeakAvailable implements Runnable {
+    private static final class ActionRunnable extends WeakAvailable implements Runnable {
 
         private Action mStrongRef;
 
@@ -104,9 +109,10 @@ public class ADownloadManager {
 
         @Override
         public final void run() {
+            final ADownloadManager manager = ADownloadManager.getInstance();
             Action action = (Action) getObject();
             if (isAvailable()) {
-                action.onAction(ADownloadManager.this, ADownloadManager.this.mInfo);
+                action.onAction(manager, manager.mInfo);
             }
 
             if (mStrongRef != null) {
@@ -121,11 +127,15 @@ public class ADownloadManager {
 
         private static final String TAG = "ADownloadManager#Info";
 
-        public Map<String, ADownloadTask> downloadTasks;
+        public List<ADownloadTask> downloadTasks;
 
         public void onCreate() {
             if (downloadTasks == null) {
-                downloadTasks = new HashMap<>();
+                downloadTasks = new ArrayList<>();
+            }
+
+            for (ADownloadTask task : this.downloadTasks) {
+                task.onCreate();
             }
         }
 
