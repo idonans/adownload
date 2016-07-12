@@ -5,6 +5,7 @@ package com.idonans.adownload;
  */
 public class ADownloadTask {
 
+
     /**
      * 下载任务 id，基于 httpUrl 计算得到，相同的资源具有相同的 id
      */
@@ -39,5 +40,27 @@ public class ADownloadTask {
      * 该资源是否支持断点续传
      */
     public boolean canContinue;
+
+    /**
+     * 下载状态
+     */
+    public int status = ADownloadStatus.STATUS_IDLE;
+
+    public void onCreate() {
+        // 恢复下载状态
+        // 下载中的，空闲的和其它未知状态的任务一律调整为空闲状态(排队等待下载)
+        switch (this.status) {
+            case ADownloadStatus.STATUS_COMPLETE:
+            case ADownloadStatus.STATUS_ERROR:
+            case ADownloadStatus.STATUS_STOPED:
+            case ADownloadStatus.STATUS_PAUSED:
+                break;
+            case ADownloadStatus.STATUS_DOWNLOADING:
+            case ADownloadStatus.STATUS_IDLE:
+            default:
+                this.status = ADownloadStatus.STATUS_IDLE;
+                break;
+        }
+    }
 
 }
