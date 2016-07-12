@@ -10,6 +10,8 @@ import com.idonans.acommon.lang.TaskQueue;
 import com.idonans.acommon.lang.WeakAvailable;
 
 import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * Android Download Manager singleton
@@ -33,8 +35,9 @@ public class ADownloadManager {
     private final Info mInfo;
 
     private ADownloadManager() {
-        String json = ADownloadDBManager.getInstance().get();
+        String json = ADownloadDBManager.getInstance().getContent();
         mInfo = Info.fromJson(json);
+        mInfo.onCreate();
     }
 
     /**
@@ -76,7 +79,7 @@ public class ADownloadManager {
             @Override
             public void onAction(@NonNull ADownloadManager manager, @NonNull Info info) {
                 CommonLog.d(TAG + " save to db");
-                ADownloadDBManager.getInstance().set(info.toJson());
+                ADownloadDBManager.getInstance().setContent(info.toJson());
             }
         }, false);
     }
@@ -117,31 +120,12 @@ public class ADownloadManager {
     public static class Info {
 
         private static final String TAG = "ADownloadManager#Info";
-        private static final int VERSION = 1;
 
-        public int version = VERSION;
+        public Map<String, ADownloadTask> downloadTasks;
 
-        /**
-         * 校验数据版本，可能当前恢复的数据是以前格式的数据，需要转换
-         */
-        private boolean validateVersion() {
-            CommonLog.d(TAG + " validateVersion [" + this.version + ", " + VERSION + "]");
-            if (this.version == VERSION) {
-                CommonLog.d(TAG + " version match");
-                return true;
-            } else if (this.version < VERSION) {
-                CommonLog.d(TAG + " try up version " + this.version + "->" + VERSION);
-                if (this.version < 1) {
-                    CommonLog.d(TAG + " invalid version " + this.version);
-                    return false;
-                }
-
-                // TODO
-                // 数据版本升级
-                return true;
-            } else {
-                CommonLog.d(TAG + " invalid version " + this.version);
-                return false;
+        public void onCreate() {
+            if (downloadTasks == null) {
+                downloadTasks = new HashMap<>();
             }
         }
 
@@ -152,7 +136,7 @@ public class ADownloadManager {
                 Type type = new TypeToken<Info>() {
                 }.getType();
                 Info info = gson.fromJson(json, type);
-                if (info != null && info.validateVersion()) {
+                if (info != null) {
                     return info;
                 }
             } catch (Exception e) {
