@@ -5,6 +5,6 @@ package com.idonans.adownload;
  */
 public interface ADownloadTaskFetchCallback {
 
-    void onDownloadTaskFetched(ADownloadTask task);
+    void onDownloadTaskFetched(ADownloadTask.Snapshot snapshot);
 
 }
