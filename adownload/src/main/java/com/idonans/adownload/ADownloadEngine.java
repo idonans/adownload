@@ -316,7 +316,7 @@ public class ADownloadEngine {
 
         private void notifyDownloadChanged() {
             CommonLog.d(TAG + " notifyDownloadChanged " + mId);
-            ADownloadManager.notifyDownloadChanged(mId);
+            ADownloadStatusObserver.notifyDownloadChanged(mId);
         }
 
     }
