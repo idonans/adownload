@@ -97,6 +97,10 @@ public class ADownloadManager {
         void onAction(@NonNull ADownloadManager manager, @NonNull Info info);
     }
 
+
+
+    private static final Object sNotifyDownloadChangedLock = new Object();
+
     private static final class ActionRunnable extends WeakAvailable implements Runnable {
 
         private Action mStrongRef;

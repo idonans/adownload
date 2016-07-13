@@ -315,9 +315,8 @@ public class ADownloadEngine {
         }
 
         private void notifyDownloadChanged() {
-            // 此方法频率可能很高
-            // TODO
             CommonLog.d(TAG + " notifyDownloadChanged " + mId);
+            ADownloadManager.notifyDownloadChanged(mId);
         }
 
     }
