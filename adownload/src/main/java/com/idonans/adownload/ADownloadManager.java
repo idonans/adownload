@@ -141,6 +141,11 @@ public class ADownloadManager {
         }
 
         @NonNull
+        public List<ADownloadTask> getDownloadTasks() {
+            return mDownloadTasks;
+        }
+
+        @NonNull
         public ADownloadTask findOrAddDownloadTask(@NonNull ADownloadRequest request) {
             ADownloadTask old = getDownloadTaskById(request.getId());
             if (old != null) {

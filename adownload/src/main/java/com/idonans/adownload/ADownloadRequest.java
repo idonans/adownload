@@ -34,9 +34,13 @@ public class ADownloadRequest {
         return mLocalPath;
     }
 
+    /**
+     * 添加到下载任务，并创建文件
+     */
     public void enqueueToDownload(ADownloadTaskFetchCallback callback) {
         mDownloadAction = new DownloadAction(callback);
         ADownloadManager.enqueueAction(mDownloadAction);
+        ADownloadEngine.getInstance().notifyDownloadTaskChanged();
     }
 
     private class DownloadAction implements Available, ADownloadManager.Action {

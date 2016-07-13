@@ -1,6 +1,11 @@
 package com.idonans.adownload;
 
 import android.support.annotation.NonNull;
+import android.text.TextUtils;
+
+import com.idonans.acommon.util.FileUtil;
+
+import java.io.File;
 
 /**
  * Created by pengji on 16-7-12.
@@ -48,6 +53,16 @@ public class ADownloadTask {
      */
     public int status = ADownloadStatus.STATUS_IDLE;
 
+    private transient ADownloadEngine.DownloadRunner mDownloadRunner;
+
+    public ADownloadEngine.DownloadRunner getDownloadRunner() {
+        return mDownloadRunner;
+    }
+
+    public void setDownloadRunner(ADownloadEngine.DownloadRunner downloadRunner) {
+        mDownloadRunner = downloadRunner;
+    }
+
     public void onCreate() {
         // 恢复下载状态
         // 下载中的，空闲的和其它未知状态的任务一律调整为空闲状态(排队等待下载)
@@ -62,6 +77,14 @@ public class ADownloadTask {
             default:
                 this.status = ADownloadStatus.STATUS_IDLE;
                 break;
+        }
+
+        // 如果下载文件缺失，重新创建一个
+        if (!TextUtils.isEmpty(this.localPath)) {
+            File targetFile = new File(localPath);
+            if (!targetFile.exists()) {
+                FileUtil.createNewFileQuietly(targetFile);
+            }
         }
     }
 
