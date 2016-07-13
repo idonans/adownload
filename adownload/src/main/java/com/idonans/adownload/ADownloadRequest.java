@@ -41,6 +41,7 @@ public class ADownloadRequest {
         mDownloadAction = new DownloadAction(callback);
         ADownloadManager.enqueueAction(mDownloadAction);
         ADownloadEngine.getInstance().notifyDownloadTaskChanged();
+        ADownloadManager.enqueueSave();
     }
 
     private class DownloadAction implements Available, ADownloadManager.Action {
