@@ -17,5 +17,11 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="add task"/>
+
+        <Button
+            android:id="@+id/print_debug"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="print debug"/>
     </LinearLayout>
 </android.support.v4.widget.NestedScrollView>

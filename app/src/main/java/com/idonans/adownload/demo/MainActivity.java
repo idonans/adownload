@@ -8,6 +8,7 @@ import com.idonans.acommon.app.CommonActivity;
 import com.idonans.acommon.lang.CommonLog;
 import com.idonans.acommon.util.FileUtil;
 import com.idonans.acommon.util.ViewUtil;
+import com.idonans.adownload.ADownloadManager;
 import com.idonans.adownload.ADownloadRequest;
 import com.idonans.adownload.ADownloadTask;
 import com.idonans.adownload.ADownloadTaskFetchCallback;
@@ -29,6 +30,14 @@ public class MainActivity extends CommonActivity {
             @Override
             public void onClick(View view) {
                 addTask();
+            }
+        });
+
+        View printDebug = ViewUtil.findViewByID(this, R.id.print_debug);
+        printDebug.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ADownloadManager.enqueuePrintDBContent();
             }
         });
     }
