@@ -4,6 +4,7 @@ import android.app.Application;
 import android.util.Log;
 
 import com.idonans.acommon.App;
+import com.squareup.leakcanary.LeakCanary;
 
 /**
  * Created by pengji on 16-7-11.
@@ -13,6 +14,7 @@ public class MainApplication extends Application {
     @Override
     public void onCreate() {
         super.onCreate();
+        LeakCanary.install(this);
         App.init(new App.Config.Builder()
                 .setContext(this)
                 .setBuildConfigAdapter(new BuildConfigAdapterImpl())
