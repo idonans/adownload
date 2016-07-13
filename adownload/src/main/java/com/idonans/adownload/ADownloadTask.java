@@ -1,9 +1,11 @@
 package com.idonans.adownload;
 
+import android.support.annotation.NonNull;
+
 /**
  * Created by pengji on 16-7-12.
  */
-public class ADownloadTask {
+public class ADownloadTask implements Cloneable {
 
 
     /**
@@ -61,6 +63,26 @@ public class ADownloadTask {
                 this.status = ADownloadStatus.STATUS_IDLE;
                 break;
         }
+    }
+
+    public ADownloadTask getSnapshot() {
+        try {
+            return (ADownloadTask) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    @NonNull
+    static ADownloadTask create(@NonNull ADownloadRequest request) {
+        ADownloadTask task = new ADownloadTask();
+        task.id = request.getId();
+        task.httpUrl = request.getHttpUrl();
+
+        String localPath = request.getLocalPath();
+        task.localPath = AUtil.createSimilarFile(localPath);
+        task.onCreate();
+        return task;
     }
 
 }

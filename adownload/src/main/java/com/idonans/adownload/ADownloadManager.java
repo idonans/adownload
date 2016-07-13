@@ -3,17 +3,13 @@ package com.idonans.adownload;
 import android.support.annotation.CheckResult;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.text.TextUtils;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.idonans.acommon.lang.CommonLog;
 import com.idonans.acommon.lang.TaskQueue;
 import com.idonans.acommon.lang.WeakAvailable;
-import com.idonans.acommon.util.FileUtil;
-import com.idonans.acommon.util.MD5Util;
 
-import java.io.File;
 import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
@@ -128,31 +124,6 @@ public class ADownloadManager {
 
     }
 
-    /**
-     * 根据 httpUrl 生成 id
-     */
-    @NonNull
-    public static String generalIdByHttpUrl(String httpUrl) {
-        return MD5Util.md5(httpUrl);
-    }
-
-    /**
-     * 根据 httpUrl 生成本地文件路径
-     */
-    @CheckResult
-    public static String generalLocalPath(String baseDir, String httpUrl) {
-        if (TextUtils.isEmpty(baseDir)) {
-            return null;
-        }
-
-        String filename = FileUtil.getFilenameFromUrl(httpUrl);
-        if (TextUtils.isEmpty(filename)) {
-            return null;
-        }
-
-        return new File(baseDir, filename).getAbsolutePath();
-    }
-
     public static class Info {
 
         private static final String TAG = "ADownloadManager#Info";
@@ -167,6 +138,18 @@ public class ADownloadManager {
             for (ADownloadTask task : this.mDownloadTasks) {
                 task.onCreate();
             }
+        }
+
+        @NonNull
+        public ADownloadTask findOrAddDownloadTask(@NonNull ADownloadRequest request) {
+            ADownloadTask old = getDownloadTaskById(request.getId());
+            if (old != null) {
+                return old;
+            }
+
+            ADownloadTask task = ADownloadTask.create(request);
+            mDownloadTasks.add(task);
+            return task;
         }
 
         @CheckResult
