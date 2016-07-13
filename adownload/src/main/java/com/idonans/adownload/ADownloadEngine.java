@@ -257,6 +257,9 @@ public class ADownloadEngine {
                 IOUtil.closeQuietly(response);
                 IOUtil.closeQuietly(randomAccessFile);
                 notifyDownloadChanged();
+
+                // 当前一个下载任务结束时同步一次数据到磁盘
+                ADownloadManager.enqueueSave();
             }
         }
 
