@@ -141,7 +141,7 @@ public class ADownloadEngine {
                 checkDownloadingOrThrow();
 
                 // 尝试断点续传
-                if (randomAccessFile.length() != snapshot.downloadLength /*文件发生了变更*/
+                if (randomAccessFile.length() != snapshot.downloadLength /*文件发生了变更, 或者在系统杀死当前进程前未序列化数据, 保守逻辑, 不要续传*/
                         || !snapshot.canContinue /*该资源不支持续传*/
                         || snapshot.contentLength <= 0 /*资源长度未知, 保守逻辑, 不要续传*/
                         || snapshot.lastModify <= 0 /*资源 last modify 未知, 保守逻辑, 不要续传*/) {
