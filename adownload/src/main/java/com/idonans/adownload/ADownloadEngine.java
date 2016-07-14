@@ -59,7 +59,7 @@ public class ADownloadEngine {
     /**
      * 将所有排队中的任务添加到下载队列里
      */
-    public void notifyDownloadTaskChanged() {
+    public void notifyAppendDownloadTasks() {
         ADownloadManager.enqueueStrongAction(new ADownloadManager.Action() {
             @Override
             public void onAction(@NonNull ADownloadManager manager, @NonNull ADownloadManager.Info info) {
@@ -315,8 +315,7 @@ public class ADownloadEngine {
         }
 
         private void notifyDownloadChanged() {
-            CommonLog.d(TAG + " notifyDownloadChanged " + mId);
-            ADownloadStatusObserver.notifyDownloadChanged(mId);
+            // 此方法的调用频率会很高，当前下载任务的状态发生了变更 mId
         }
 
     }

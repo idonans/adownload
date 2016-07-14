@@ -40,7 +40,7 @@ public class ADownloadRequest {
     public void enqueueToDownload(ADownloadTaskFetchCallback callback) {
         mDownloadAction = new DownloadAction(callback);
         ADownloadManager.enqueueAction(mDownloadAction);
-        ADownloadEngine.getInstance().notifyDownloadTaskChanged();
+        ADownloadEngine.getInstance().notifyAppendDownloadTasks();
         ADownloadManager.enqueueSave();
     }
 
