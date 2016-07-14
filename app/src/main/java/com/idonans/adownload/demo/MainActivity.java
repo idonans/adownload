@@ -27,7 +27,9 @@ public class MainActivity extends CommonActivity {
 
     private static final String TAG = "MainActivity";
 
+    private static final String TEST_URL = "http://www.iteye.com/images/logo.gif";
     private TextView mTaskInfo;
+    private String mDownloadId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,6 +44,38 @@ public class MainActivity extends CommonActivity {
             }
         });
 
+        View startTask = ViewUtil.findViewByID(this, R.id.start_task);
+        startTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                startTask();
+            }
+        });
+
+        View pauseTask = ViewUtil.findViewByID(this, R.id.pause_task);
+        pauseTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pauseTask();
+            }
+        });
+
+        View stopTask = ViewUtil.findViewByID(this, R.id.stop_task);
+        stopTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                stopTask();
+            }
+        });
+
+        View removeTask = ViewUtil.findViewByID(this, R.id.remove_task);
+        removeTask.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                removeTask();
+            }
+        });
+
         View printDebug = ViewUtil.findViewByID(this, R.id.print_debug);
         printDebug.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -53,16 +87,36 @@ public class MainActivity extends CommonActivity {
         mTaskInfo = ViewUtil.findViewByID(this, R.id.task_info);
     }
 
+
     private void addTask() {
-        final String url = "http://www.iteye.com/images/logo.gif?1448702469";
         File downloadDir = FileUtil.getPublicDownloadDir();
         if (downloadDir == null) {
             Toast.makeText(this, "public download dir not found", Toast.LENGTH_LONG).show();
             return;
         }
 
-        String downloadId = ADownload.download(url, downloadDir.getAbsolutePath());
-        bindDownloadTaskInfo(downloadId);
+        mDownloadId = ADownload.download(TEST_URL, downloadDir.getAbsolutePath());
+        bindDownloadTaskInfo(mDownloadId);
+    }
+
+    private void startTask() {
+        ADownload.start(mDownloadId);
+        bindDownloadTaskInfo(mDownloadId);
+    }
+
+    public void pauseTask() {
+        ADownload.pause(mDownloadId);
+        bindDownloadTaskInfo(mDownloadId);
+    }
+
+    public void stopTask() {
+        ADownload.stop(mDownloadId);
+        bindDownloadTaskInfo(mDownloadId);
+    }
+
+    public void removeTask() {
+        ADownload.remove(mDownloadId);
+        bindDownloadTaskInfo(mDownloadId);
     }
 
     private void bindDownloadTaskInfo(String downloadId) {

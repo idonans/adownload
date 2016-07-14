@@ -18,6 +18,30 @@
             android:layout_height="wrap_content"
             android:text="add task"/>
 
+        <Button
+            android:id="@+id/start_task"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="start task"/>
+
+        <Button
+            android:id="@+id/pause_task"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="pause task"/>
+
+        <Button
+            android:id="@+id/stop_task"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="stop task"/>
+
+        <Button
+            android:id="@+id/remove_task"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="remove task"/>
+
         <TextView
             android:id="@+id/task_info"
             android:layout_width="match_parent"
