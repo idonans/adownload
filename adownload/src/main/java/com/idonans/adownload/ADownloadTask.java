@@ -3,6 +3,7 @@ package com.idonans.adownload;
 import android.support.annotation.NonNull;
 import android.text.TextUtils;
 
+import com.idonans.acommon.lang.Progress;
 import com.idonans.acommon.util.FileUtil;
 
 import java.io.File;
@@ -69,7 +70,7 @@ public class ADownloadTask {
         switch (this.status) {
             case ADownloadStatus.STATUS_COMPLETE:
             case ADownloadStatus.STATUS_ERROR:
-            case ADownloadStatus.STATUS_STOPED:
+            case ADownloadStatus.STATUS_STOPPED:
             case ADownloadStatus.STATUS_PAUSED:
                 break;
             case ADownloadStatus.STATUS_DOWNLOADING:
@@ -154,6 +155,16 @@ public class ADownloadTask {
             this.lastModify = task.lastModify;
             this.canContinue = task.canContinue;
             this.status = task.status;
+        }
+
+        public int getProgress() {
+            try {
+                Progress progress = new Progress(this.contentLength, this.downloadLength);
+                return progress.getPercent();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+            return 0;
         }
 
     }

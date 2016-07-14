@@ -37,9 +37,9 @@ public class ADownloadRequest {
     /**
      * 添加到下载任务，并创建文件
      */
-    public void enqueueToDownload(ADownloadTaskFetchCallback callback) {
+    public void enqueueToDownload(ADownloadTaskFetchCallback callback, boolean weak) {
         mDownloadAction = new DownloadAction(callback);
-        ADownloadManager.enqueueAction(mDownloadAction);
+        ADownloadManager.enqueueAction(mDownloadAction, weak);
         ADownloadEngine.getInstance().notifyAppendDownloadTasks();
         ADownloadManager.enqueueSave();
     }
