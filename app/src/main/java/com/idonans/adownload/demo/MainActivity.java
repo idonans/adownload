@@ -76,6 +76,14 @@ public class MainActivity extends CommonActivity {
             }
         });
 
+        View removeAllTasks = ViewUtil.findViewByID(this, R.id.remove_all_tasks);
+        removeAllTasks.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                removeAllTasks();
+            }
+        });
+
         View printDebug = ViewUtil.findViewByID(this, R.id.print_debug);
         printDebug.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -117,6 +125,10 @@ public class MainActivity extends CommonActivity {
     public void removeTask() {
         ADownload.remove(mDownloadId);
         bindDownloadTaskInfo(mDownloadId);
+    }
+
+    public void removeAllTasks() {
+        ADownload.removeAll();
     }
 
     private void bindDownloadTaskInfo(String downloadId) {

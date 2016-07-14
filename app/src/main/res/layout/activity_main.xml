@@ -42,6 +42,12 @@
             android:layout_height="wrap_content"
             android:text="remove task"/>
 
+        <Button
+            android:id="@+id/remove_all_tasks"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="remove all tasks"/>
+
         <TextView
             android:id="@+id/task_info"
             android:layout_width="match_parent"
