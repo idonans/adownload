@@ -266,10 +266,7 @@ public class ADownloadEngine {
         private void resetDownloadContent() {
             ADownloadTask task = getDownloadTask();
             if (isDownloading()) {
-                task.canContinue = false;
-                task.downloadLength = 0L;
-                task.contentLength = 0L;
-                task.lastModify = 0L;
+                task.resetWithStatus(ADownloadStatus.STATUS_DOWNLOADING);
             }
         }
 

@@ -75,8 +75,7 @@ public class ADownload {
                     case ADownloadStatus.STATUS_STOPPED:
                     case ADownloadStatus.STATUS_ERROR:
                         // 重新下载
-                        task.canContinue = false;
-                        task.status = ADownloadStatus.STATUS_IDLE;
+                        task.resetWithStatus(ADownloadStatus.STATUS_IDLE);
                         task.createLocalFileIfNotExists();
                         break;
                     case ADownloadStatus.STATUS_PAUSED:

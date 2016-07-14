@@ -83,6 +83,14 @@ public class ADownloadTask {
         createLocalFileIfNotExists();
     }
 
+    public void resetWithStatus(int status) {
+        this.status = status;
+        this.lastModify = 0L;
+        this.canContinue = false;
+        this.downloadLength = 0L;
+        this.contentLength = 0L;
+    }
+
     public void createLocalFileIfNotExists() {
         // 如果下载文件缺失，重新创建一个
         if (!TextUtils.isEmpty(this.localPath)) {
