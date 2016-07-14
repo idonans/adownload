@@ -6,6 +6,9 @@ import com.idonans.acommon.lang.ThreadPool;
 import com.idonans.acommon.lang.WeakAvailable;
 import com.idonans.acommon.util.FileUtil;
 
+import java.util.ArrayList;
+import java.util.List;
+
 /**
  * Created by pengji on 16-7-14.
  */
@@ -41,6 +44,27 @@ public class ADownload {
                 ADownloadTaskFetchCallback c = (ADownloadTaskFetchCallback) available.getObject();
                 if (available.isAvailable()) {
                     c.onDownloadTaskFetched(snapshot);
+                }
+            }
+        });
+    }
+
+    /**
+     * 查询所有下载任务。注意，查询过程中对 callback 只是持有弱引用. 此 callback 支持 Available 校验.
+     */
+    public static void queryAll(ADownloadTasksCallback callback) {
+        final WeakAvailable available = new WeakAvailable(callback);
+        ADownloadManager.enqueueStrongAction(new ADownloadManager.Action() {
+            @Override
+            public void onAction(@NonNull ADownloadManager manager, @NonNull ADownloadManager.Info info) {
+                List<ADownloadTask> tasks = info.getDownloadTasks();
+                List<ADownloadTask.Snapshot> snapshots = new ArrayList<>(tasks.size());
+                for (ADownloadTask task : tasks) {
+                    snapshots.add(task.getSnapshot());
+                }
+                ADownloadTasksCallback c = (ADownloadTasksCallback) available.getObject();
+                if (available.isAvailable()) {
+                    c.onDownloadTasksFetched(snapshots);
                 }
             }
         });
@@ -199,6 +223,41 @@ public class ADownload {
                 FileUtil.deleteFileQuietly(snapshot.localPath);
             }
         });
+    }
+
+    /**
+     * 删除所有下载任务, 同时删除相关文件
+     */
+    public static void removeAll() {
+        ADownloadManager.enqueueStrongAction(new ADownloadManager.Action() {
+            @Override
+            public void onAction(@NonNull ADownloadManager manager, @NonNull ADownloadManager.Info info) {
+                List<ADownloadTask> tasks = info.getDownloadTasks();
+                for (ADownloadTask task : tasks) {
+                    switch (task.status) {
+                        case ADownloadStatus.STATUS_ERROR:
+                        case ADownloadStatus.STATUS_STOPPED:
+                            // ignore
+                            break;
+                        case ADownloadStatus.STATUS_DOWNLOADING:
+                        case ADownloadStatus.STATUS_IDLE:
+                        case ADownloadStatus.STATUS_COMPLETE:
+                        case ADownloadStatus.STATUS_PAUSED:
+                        default:
+                            // 停止
+                            task.status = ADownloadStatus.STATUS_STOPPED;
+                            break;
+                    }
+                    pendingToRemove(task.getSnapshot());
+                }
+                tasks.clear();
+            }
+        });
+        ADownloadManager.enqueueSave();
+    }
+
+    public interface ADownloadTasksCallback {
+        void onDownloadTasksFetched(List<ADownloadTask.Snapshot> snapshots);
     }
 
 }
