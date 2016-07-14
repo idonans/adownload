@@ -48,13 +48,13 @@ public class ADownload {
 
     /**
      * 开始下载一个任务(切换到等待下载)
-     * <p>
+     * <p/>
      * 如果当前任务已经完成，或者正在下载，或者正在排队等待下载，则不会做任何处理。
-     * <p>
+     * <p/>
      * 如果当前任务已经停止，则重新开始下载
-     * <p>
+     * <p/>
      * 如果当前任务处于出错状态，则重新开始下载
-     * <p>
+     * <p/>
      * 如果当前任务已经暂停，则使用断点的方式，续传下载（如果不能续传，会重新下载）
      */
     public static void start(final String id) {
@@ -77,6 +77,7 @@ public class ADownload {
                         // 重新下载
                         task.canContinue = false;
                         task.status = ADownloadStatus.STATUS_IDLE;
+                        task.createLocalFileIfNotExists();
                         break;
                     case ADownloadStatus.STATUS_PAUSED:
                     default:
@@ -92,7 +93,7 @@ public class ADownload {
 
     /**
      * 暂停一个下载任务
-     * <p>
+     * <p/>
      * 如果当前任务正在下载，或者正在排队等待下载，则切换到暂停状态，否则不做任务处理
      */
     public static void pause(final String id) {
@@ -125,7 +126,7 @@ public class ADownload {
 
     /**
      * 停止一个下载任务
-     * <p>
+     * <p/>
      * 如果当前任务已出错，或者已停止，则不做任何处理，否则切换停止状态。注意：已经完成的任务也可以切换到停止状态
      */
     public static void stop(final String id) {
@@ -158,7 +159,7 @@ public class ADownload {
 
     /**
      * 删除一个下载任务
-     * <p>
+     * <p/>
      * 删除指定下载任务，同时会删除相关的文件。在删除任务时，会先将任务停止，然后删除。
      */
     public static void remove(final String id) {

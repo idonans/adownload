@@ -80,6 +80,10 @@ public class ADownloadTask {
                 break;
         }
 
+        createLocalFileIfNotExists();
+    }
+
+    public void createLocalFileIfNotExists() {
         // 如果下载文件缺失，重新创建一个
         if (!TextUtils.isEmpty(this.localPath)) {
             File targetFile = new File(localPath);
